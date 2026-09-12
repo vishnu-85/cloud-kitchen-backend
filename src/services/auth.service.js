@@ -89,8 +89,28 @@ const getUserByID = async (name) => {
   return user;
 };
 
+
+const getUsers = async (payload = {}) => {
+  let filter = {};
+  payload.name && (filter.name = { $regex: payload.name, $options: 'i' });
+  payload.email && (filter.email = { $regex: payload.email, $options: 'i' });
+  payload.phone && (filter.phone = { $regex: payload.phone, $options: 'i' });
+  payload.roleId && (filter.roleId = payload.roleId);
+  payload.isActive !== undefined && (filter.isActive = payload.isActive);
+  const users = await User.find(filter).limit(payload.limit || 10).skip(payload.skip || 0);
+
+  if (!users) {
+    throw new Error('Users not found');
+  }
+
+  return users;
+};
+
+
+
 module.exports = {
   registerUser,
   loginUser,
-  getUserByID
+  getUserByID,
+  getUsers
 };

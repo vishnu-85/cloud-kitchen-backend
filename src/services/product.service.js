@@ -85,7 +85,8 @@ const createProduct = async (payload = {}) => {
     isFeatured: payload.isFeatured ?? false,
     isBestseller: payload.isBestseller ?? false,
     rating: payload.rating ?? 0,
-    totalReviews: payload.totalReviews ?? 0
+    totalReviews: payload.totalReviews ?? 0,
+    stock: payload.stock || 10
   });
 
   return product;
@@ -139,10 +140,23 @@ const deleteProductById = async (productId) => {
   return product;
 };
 
+
+const saveProducts = async (products = []) => {
+    try {
+        await Product.insertMany(products);
+        return products;
+    } catch (error) {
+        // console.error('Error saving products:', error);
+        throw new Error('Failed to save products');
+    }
+}
+
+
 module.exports = {
   getProducts,
   getProductById,
   createProduct,
   updateProductById,
-  deleteProductById
+  deleteProductById,
+  saveProducts
 };

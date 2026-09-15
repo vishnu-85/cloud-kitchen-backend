@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 
 const User = require('../models/User');
+const Role = require('../models/Role');
 const { generateToken } = require('../utils/jwt');
 
 const registerUser = async (payload = {}) => {
@@ -97,7 +98,46 @@ const getUsers = async (payload = {}) => {
   payload.phone && (filter.phone = { $regex: payload.phone, $options: 'i' });
   payload.roleId && (filter.roleId = payload.roleId);
   payload.isActive !== undefined && (filter.isActive = payload.isActive);
-  const users = await User.find(filter).limit(payload.limit || 10).skip(payload.skip || 0);
+
+
+  // const users = await User.find(filter, { _id: 0,
+  //   name: 1,
+  //   email: 1,
+  //   phone: 1,
+  //   roleId: 1,
+  //   isActive: 1,
+  // }).limit(payload.limit || 10).skip(payload.skip || 0);
+
+  // console.log(users);
+  
+
+  const users = await User.aggregate([
+     {
+        $lookup: {
+          from: "roles",
+          localField: "roleId",
+          foreignField: "_id",
+          as: "role"
+        }
+      },
+      {
+        $unwind: {
+          path: "$role",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          name: 1,
+          email: 1,
+          phone: 1,
+          isActive: 1,
+          roleId: 1,
+          roleName: "$role.name"
+        }
+      }
+  ])
 
   if (!users) {
     throw new Error('Users not found');

@@ -10,6 +10,7 @@ const downloadRoutes = require('./src/routes/download.routes');
 const addressRoutes = require('./src/routes/address.routes');
 const cartRoutes = require('./src/routes/cart.routes');
 const orderRoutes = require('./src/routes/order.routes');
+const roleRoutes = require('./src/routes/role.routes');
 
 const app = express();
 
@@ -40,5 +41,6 @@ app.use('/api/product-data', downloadRoutes);
 app.use('/api/addresses', addressRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/roles', roleRoutes);
 
 module.exports = app;

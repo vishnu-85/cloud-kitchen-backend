@@ -4,9 +4,9 @@ const User = require('../models/User');
 const { generateToken } = require('../utils/jwt');
 
 const registerUser = async (payload = {}) => {
-  const { name, email, phone, password, roleId } = payload;
+  const {firstName, lastName, email, phone, password, roleId } = payload;
 
-  if (!name || !email || !phone || !password) {
+  if (!firstName || !lastName || !email || !phone || !password) {
     throw new Error('Name, email, phone and password are required');
   }
 
@@ -21,7 +21,8 @@ const registerUser = async (payload = {}) => {
   const hashedPassword = await bcrypt.hash(password, 12);
 
   const user = await User.create({
-    name,
+    firstName,
+    lastName,
     email,
     phone,
     password: hashedPassword,
@@ -36,7 +37,8 @@ const registerUser = async (payload = {}) => {
   return {
     user: {
       id: user._id,
-      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
       phone: user.phone,
       role: user.roleId
@@ -70,7 +72,8 @@ const loginUser = async (email, password) => {
   return {
     user: {
       id: user._id,
-      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
       phone: user.phone,
       role: user.roleId

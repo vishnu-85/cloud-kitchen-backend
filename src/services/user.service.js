@@ -1,8 +1,8 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
-const getUserByID = async (name) => {
-  const user = await User.findOne({ name }).select('-password');
+const getUserByID = async (firstName) => {
+  const user = await User.findOne({ firstName }).select('-password');
 
   if (!user) {
     throw new Error('User not found');
@@ -14,7 +14,7 @@ const getUserByID = async (name) => {
 const getUsers = async (filters = {}) => {
   const match = {};
 
-  for (const field of ['name', 'email', 'phone']) {
+  for (const field of ['firstName', 'lastName', 'email', 'phone']) {
     if (filters[field]) {
       match[field] = { $regex: filters[field], $options: 'i' };
     }
@@ -47,7 +47,8 @@ const getUsers = async (filters = {}) => {
     {
       $project: {
         _id: 1,
-        name: 1,
+        firstName: 1,
+        lastName: 1,
         email: 1,
         phone: 1,
         isActive: 1,
@@ -59,18 +60,20 @@ const getUsers = async (filters = {}) => {
 };
 
 const createUser = async (payload = {}) => {
-  const name = String(payload.name || '').trim();
+  const firstName = String(payload.firstName || '').trim();
+  const lastName = String(payload.lastName || '').trim();
   const email = String(payload.email || '').trim().toLowerCase();
   const phone = String(payload.phone || '').trim();
   const { password, roleId } = payload;
 
-  if (!name || !email || !phone || !password || !roleId) {
-    throw new Error('Name, email, phone, password and roleId are required');
+  if (!firstName || !lastName || !email || !phone || !password || !roleId) {
+    throw new Error('firstName, lastName, email, phone, password and roleId are required');
   }
 
   const hashedPassword = await bcrypt.hash(password, 12);
   const user = await User.create({
-    name,
+    firstName,
+    lastName,
     email,
     phone,
     password: hashedPassword,
@@ -84,7 +87,7 @@ const createUser = async (payload = {}) => {
 const updateUser = async (id, payload = {}) => {
   const updates = {};
 
-  for (const field of ['name', 'email', 'phone']) {
+  for (const field of ['firstName', 'lastName', 'phone']) {
     if (payload[field] !== undefined) {
       const value = String(payload[field]).trim();
       if (!value) throw new Error(`User ${field} is required`);

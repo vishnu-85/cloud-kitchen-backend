@@ -47,44 +47,7 @@ const login = async (req, res) => {
   }
 };
 
-const getUsers = async (req, res) => {
-try {
-    console.log(req.query);
-    
-        const users = await authService.getUsers(req.query);
-        res.status(200).json({
-            success: true,
-            message: 'Users fetched successfully',
-            data: users
-        });
-    } catch (error) {
-        res.status(404).json({
-            success: false,
-            message: error.message
-        });
-    }
-}
-const getUserByID = async (req, res) => {
-    try {
-        const user = await authService.getUserByID(req.params.name);
-        res.status(200).json({
-            success: true,
-            message: 'User fetched successfully',
-            data: user
-        });
-    } catch (error) {
-        res.status(404).json({
-            success: false,
-            message: error.message
-        });
-    }
-};
-
-
-
 module.exports = {
   register,
-  login,
-  getUserByID,
-  getUsers
+  login
 }

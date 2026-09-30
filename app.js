@@ -2,8 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const { Auth } = require('./src/middleware/auth.middleware');
 
 const authRoutes = require('./src/routes/auth.routes');
+const userRoutes = require('./src/routes/user.routes');
 const categoryRoutes = require('./src/routes/category.routes');
 const productRoutes = require('./src/routes/product.routes');
 const downloadRoutes = require('./src/routes/download.routes');
@@ -36,13 +38,14 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
-app.use('/api/categories', categoryRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/product-data', downloadRoutes);
-app.use('/api/addresses', addressRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/roles', roleRoutes);
-app.use('/api/permissions', permissionRoutes);
+app.use('/api/user', Auth, userRoutes);
+app.use('/api/categories', Auth, categoryRoutes);
+app.use('/api/products', Auth, productRoutes);
+app.use('/api/product-data', Auth, downloadRoutes);
+app.use('/api/addresses', Auth, addressRoutes);
+app.use('/api/cart', Auth, cartRoutes);
+app.use('/api/orders', Auth, orderRoutes);
+app.use('/api/roles', Auth, roleRoutes);
+app.use('/api/permissions', Auth, permissionRoutes);
 
 module.exports = app;

@@ -10,7 +10,13 @@ const connectDB = async () => {
   }
 
   try {
-    const connection = await mongoose.connect(process.env.MONGO_URI);
+    const connection = await mongoose.connect(process.env.MONGO_URI, {
+      maxPoolSize: 50, // Requested maximum for this long-running server's connection pool.
+      minPoolSize: 5, // Keep a small number of connections ready between requests.
+      maxIdleTimeMS: 60000,
+      waitQueueTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 5000
+    });
     console.log(`MongoDB connected: ${connection.connection.host}`);
   } catch (error) {
     console.error(`MongoDB connection error: ${error.message}`);

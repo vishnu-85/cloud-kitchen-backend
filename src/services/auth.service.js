@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 
 const User = require('../models/User');
+const Role = require('../models/Role');
 const { generateToken } = require('../utils/jwt');
 
 const registerUser = async (payload = {}) => {
@@ -41,7 +42,8 @@ const registerUser = async (payload = {}) => {
       lastName: user.lastName,
       email: user.email,
       phone: user.phone,
-      role: user.roleId
+      role: user.roleId,
+      role_name: user.roleId ? (await Role.findById(user.roleId)).name : null
     },
     token
   };
@@ -76,7 +78,8 @@ const loginUser = async (email, password) => {
       lastName: user.lastName,
       email: user.email,
       phone: user.phone,
-      role: user.roleId
+      role: user.roleId,
+      role_name: user.roleId ? (await Role.findById(user.roleId)).name : null
     },
     token
   };
